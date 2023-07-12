@@ -15,6 +15,7 @@ typedef enum {
   OFF
 } tc_heater_state_t;
 
+tc_error_t  tc_read_temperature(const char* filename, float* temperature);
 tc_error_t  tc_write_temperature(const char* filename, float t);
 tc_error_t  tc_read_state(const char* filename, tc_heater_state_t* state);
 

@@ -133,8 +133,9 @@ tc_error_t tc_write_temperature(const char* filename, float t) {
 
       // Put an entry in syslog that we had a failure.
       syslog(LOG_INFO, 
-        "failed temp write (%s); retry with interval (%d)", 
+        "failed temp write (%s - %s); retry with interval (%d)", 
         strerror(errno),
+        filename,
         retry_interval << 1
       );
 
@@ -179,6 +180,53 @@ tc_error_t  tc_read_state(const char* filename, tc_heater_state_t* state) {
     if (result == UNKNOWN_HEATER_STATE) {
       syslog(LOG_INFO, "we have an unknown heater state; assuming to ON.");
       *state = ON;
+      result = OK;
+    } else if (result != OK && retry_interval < 64) {
+      syslog(LOG_INFO,
+        "failed state read with (%s); retry with interval (%d)",
+        strerror(errno),
+        retry_interval << 1
+      );
+      sleep(retry_interval);
+      retry_interval = retry_interval << 1;
+    }
+
+  } while (result != OK && retry_interval < 64);
+
+  // Return the error result.
+  return result;
+}
+
+/**
+ * The upper reading function. Handles retries, errors, and
+ * the like while the lower function handles the mechanics of
+ * actually reading from the file.
+ *
+ * @param filename The file from which to read.
+ * @param temperature The current temperature.
+ * @return The error conditions.
+ */
+tc_error_t  tc_read_temperature(const char* filename, float* temperature) {
+  // Initial retry interval.
+  char retry_interval = 1;
+
+  // Initial error conditions.
+  tc_error_t result = OK;
+
+  // This loop supports retry logic.
+  do {
+    // Attempt a read.
+    result = _read_temperature(filename, temperature);
+
+    // Take a nap based on the retry interval.
+    sleep(retry_interval);
+
+    // Is the result unknown? If so, assume the heater is ON.
+    // Otherwise, if still in error, retry the read and make
+    // a syslog entry.
+    if (result == UNKNOWN_TEMPERATURE) {
+      syslog(LOG_INFO, "we have an unknown temperature; returning default temperature: %.2f.", DEFAULT_TEMPERATURE);
+      *temperature = DEFAULT_TEMPERATURE;
       result = OK;
     } else if (result != OK && retry_interval < 64) {
       syslog(LOG_INFO,

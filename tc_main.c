@@ -23,7 +23,6 @@
 #include "tc_main.h"
 
 static const char*  DAEMON_NAME     = "tcsimd";
-static const char*  WORKING_DIR     = "/";
 
 static const long   SLEEP_DELAY     = 5;
 
@@ -110,7 +109,7 @@ static void _daemonize(void) {
 
   // New file persmissions on this process, they need to be permissive.
   //umask(S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
-  //umask(666);
+  umask(664);
 
   // Change to the working directory.
   chdir(WORKING_DIR);
