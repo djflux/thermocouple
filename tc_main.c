@@ -20,10 +20,9 @@
 
 #include "tc_error.h"
 #include "tc_state.h"
+#include "tc_main.h"
 
 static const char*  DAEMON_NAME     = "tcsimd";
-static const char*  TEMP_FILENAME   = "/tmp/temp";
-static const char*  STATE_FILENAME  = "/tmp/status";
 static const char*  WORKING_DIR     = "/";
 
 static const long   SLEEP_DELAY     = 5;
@@ -147,7 +146,7 @@ static void _run_simulation(void) {
     temp = (heater_state == ON) ? temp + 1 : temp - 1;
 
     // Write the temp to the file.
-    err = tc_write_temperature(TEMP_FILENAME, temp);
+    err = tc_write_temperature(TEMPERATURE_FILENAME, temp);
     if (err != OK) _exit_process(err);
 
     // Take a bit of a nap.
@@ -189,9 +188,9 @@ static void _configure(void) {
     _create_file(STATE_FILENAME);
   }
 
-  if (!_file_exists(TEMP_FILENAME)) {
+  if (!_file_exists(TEMPERATURE_FILENAME)) {
     syslog(LOG_INFO, "no temp file; creating.");
-    _create_file(TEMP_FILENAME);
+    _create_file(TEMPERATURE_FILENAME);
   }
   syslog(LOG_INFO, "test finished.");
 }
