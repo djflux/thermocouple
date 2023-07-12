@@ -14,6 +14,7 @@
  * The lower function contains the file reading logic.
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <syslog.h>
@@ -59,6 +60,28 @@ static tc_error_t _read_state(const char* filename, tc_heater_state_t* result) {
 
   // Close the file and return.
   fclose(fp);
+  return retcode;
+}
+
+static tc_error_t _read_temperature(const char* filename, float* temperature) {
+  // Open the file.
+  FILE* fp = fopen(filename, "rb");
+
+  // Set our default return code.
+  tc_error_t retcode = OK;
+
+  // Test that we can open the file, return if not.
+  if (fp == NULL) {
+    syslog(LOG_ERR, "Could not open temperature file %s to read.", filename);
+    return NO_OPEN;
+  }
+
+  char buffer[32];
+  float val;
+  fgets(buffer, sizeof(buffer), fp);
+  val = atof(buffer);
+  syslog(LOG_INFO, "Current thermocouple temperature is: %.2f", val);
+  *temperature = val;
   return retcode;
 }
 
