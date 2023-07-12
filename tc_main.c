@@ -132,7 +132,7 @@ static void _run_simulation(void) {
   // It's a bit cold! Note we're using a float in case we want to be
   // more sophisticated with the temperature management in the future.
   // Right now we just use a linear model.
-  float temp = 64;
+  float temp = 15.7;
 
   syslog(LOG_INFO, "beginning thermocouple simulation");
   while(true) {
