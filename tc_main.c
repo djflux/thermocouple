@@ -143,7 +143,7 @@ static void _run_simulation(void) {
 
     // Is the heater on? then increase the temperature one degree.
     // Otherwise, it's getting colder!
-    temp = (heater_state == ON) ? temp + 1 : temp - 1;
+    temp = (heater_state == ON) ? temp + 0.1 : temp - 0.1;
 
     // Write the temp to the file.
     err = tc_write_temperature(TEMPERATURE_FILENAME, temp);
