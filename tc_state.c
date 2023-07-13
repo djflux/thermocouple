@@ -80,7 +80,7 @@ static tc_error_t _read_temperature(const char* filename, float* temperature) {
   float val;
   fgets(buffer, sizeof(buffer), fp);
   val = atof(buffer);
-  syslog(LOG_INFO, "Current thermocouple temperature is: %.2f", val);
+  // syslog(LOG_INFO, "Current thermocouple temperature is: %.2f", val);
   *temperature = val;
   return retcode;
 }
