@@ -49,10 +49,10 @@ static tc_error_t _read_state(const char* filename, tc_heater_state_t* result) {
   char buffer[32];
   fgets(buffer, sizeof(buffer), fp);
   if (strstr(buffer, "ON")) {
-    syslog(LOG_INFO, "HEATER IS ON");
+    // syslog(LOG_INFO, "HEATER IS ON");
     *result = ON;
   } else if (strstr(buffer, "OFF")) {
-    syslog(LOG_INFO, "HEATER IS OFF");
+    // syslog(LOG_INFO, "HEATER IS OFF");
     *result = OFF;
   } else {
     retcode = UNKNOWN_HEATER_STATE;
